@@ -1,4 +1,5 @@
 jansson-2.13/
 jansson-2.13.tar
 *.o
+src/build/
 Claude\ Outputs/

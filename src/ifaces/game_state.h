@@ -1,7 +1,18 @@
+#ifndef GAME_STATE
+#define GAME_STATE
+
 /* 
  * Data structures to hold the game's items (board, pieces, player state, etc).
  * Defines the core game model used throughout the application.
  */
+
+enum Players {
+    PLAYER_ONE,
+    PLAYER_TWO
+};
+
+/* Game piece look ups */
+extern const char pieceSymbols[];
 
 /* 
  * Enum: RangeType
@@ -50,6 +61,7 @@ struct Piece {
     int minRange;
     int power;
     int mvLimit;
+    char icon;
     enum RangeType rangeType;
     enum PieceType pieceType;
     int player;
@@ -77,14 +89,21 @@ enum GamePhase {
  * 
  * Fields:
  *   boardMax_X, boardMax_Y: Board dimensions (6x6 for this game)
+ *   currPlayer: Which player's turn it is 
  *   pieces[6]: Array of pointers to the 6 pieces in play (3 per player)
  *   gamePhase: Current state of the game (playing, draw, or winner declared)
+ *   actionHistroy[3][100]: A log of the last three actions to be taken
+ *   actionCount: The number of moves taken throughout the whole game
  */
 struct GameState {
     int boardMax_X;
     int boardMax_Y;
-    Piece* pieces[6];
+    enum Players currPlayer;
+    struct Piece* pieces[6];
     enum GamePhase gamePhase;
+    char actionHistory[3][100];
+    int actionCount;
+
 };
 
 /*
@@ -117,3 +136,7 @@ struct Move {
     enum ActionType action;     // What type of action
     int pieceIndex;             // Index into pieces array for quick lookup
 };
+
+struct GameState* game_init();
+
+#endif
