@@ -23,6 +23,7 @@ int display_init() {
     noecho();
     cbreak();
     start_color();
+    curs_set(0);
     init_pair(PLAYER_ONE, COLOR_RED, COLOR_BLACK);  // Player one colors
     init_pair(PLAYER_TWO, COLOR_BLUE, COLOR_BLACK); // Player two colors
     return 0;
