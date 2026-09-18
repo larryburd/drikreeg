@@ -140,4 +140,5 @@ struct Move {
 struct GameState* game_init();
 struct Piece* create_piece(int y, int x, int player, int type);
 void changeTurns(struct GameState* gs);
+int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y);
 #endif

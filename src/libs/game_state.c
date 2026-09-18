@@ -51,7 +51,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
             minRange = 1;
             rangeType = CIRCLE;
             power = 10;
-            mvLimit = 3;
+            mvLimit = 7;
             break;
         case RANGED:
             /* Ranged attacker - medium health, distant range, high movement */
@@ -61,7 +61,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
             rangeType = STRAIGHTLINE;
             minRange = 2;
             power = 15;
-            mvLimit = 4;
+            mvLimit = 10;
             break;
         case HEALER:
             /* Support unit - low health, medium range heal, moderate movement */
@@ -71,7 +71,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
             minRange = 1;
             rangeType = CIRCLE;
             power = 8;
-            mvLimit = 3;
+            mvLimit = 7;
             break;
         default:
             /* Invalid piece type */
@@ -139,6 +139,7 @@ struct GameState* game_init() {
     return gs;
 }
 
+/* Change the current player and increment actions taken */
 void changeTurns(struct GameState* gs) {
     if (gs->currPlayer == PLAYER_ONE) {
         gs->currPlayer = PLAYER_TWO;
@@ -149,4 +150,47 @@ void changeTurns(struct GameState* gs) {
     gs->actionCount++;
 
     return;
+}
+
+/**
+ * is_move_legal - Checks if a move is legal based on game rules.
+ * 
+ * @param gs: Pointer to the GameState
+ * @param piece: Pointer to the piece being moved
+ * @param target_x: X coordinate of the destination
+ * @param target_y: Y coordinate of the destination
+ * 
+ * @return: 0 if move is legal, -1 if illegal
+ * 
+ * Checks:
+ *   - Destination is within board bounds
+ *   - Distance from current position doesn't exceed mvLimit (movement limit)
+ *   - No other piece occupies the destination
+ */
+int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y) {
+    /* Check if target is within board bounds */
+    if (target_x < 0 || target_x >= gs->boardMax_X || 
+        target_y < 0 || target_y >= gs->boardMax_Y) {
+        return -1;  /* Out of bounds */
+    }
+    
+    /* Calculate Manhattan distance (total squares to travel) */
+    int distance = abs(piece->x - target_x) + abs(piece->y - target_y);
+    
+    /* Check if distance exceeds movement limit */
+    if (distance > piece->mvLimit) {
+        return -1;  /* Too far to move */
+    }
+    
+    /* Check if another piece occupies the destination */
+    for (int i = 0; i < 6; i++) {
+        if (gs->pieces[i] != NULL && 
+            gs->pieces[i] != piece &&  /* Don't check the piece against itself */
+            gs->pieces[i]->x == target_x && 
+            gs->pieces[i]->y == target_y) {
+            return -1;  /* Space occupied */
+        }
+    }
+    
+    return 0;  /* Move is legal */
 }

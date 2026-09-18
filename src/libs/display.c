@@ -138,8 +138,31 @@ int display_render_status(struct GameState* gs) {
     return 0;
 }
 
-int display_render_message(const char* msg) {
-
+/**
+ * display_render_message - Displays a message to the player.
+ * 
+ * @param message: The message string to display
+ * 
+ * Renders the message at the bottom of the screen in the message log area.
+ */
+int display_render_message(const char* message) {
+    const int MESSAGE_X = 2;
+    const int MESSAGE_Y = 20;  /* Bottom of screen */
+    
+    if (message == NULL) {
+        return -1;
+    }
+    
+    /* Clear the message area first (2 rows for message display) */
+    for (int i = 0; i < 2; i++) {
+        mvprintw(MESSAGE_Y + i, MESSAGE_X, "                                                                            ");
+    }
+    
+    /* Display the message */
+    attron(A_BOLD);
+    mvprintw(MESSAGE_Y, MESSAGE_X, ">> %s", message);
+    standend();
+    
     return 0;
 }
 
