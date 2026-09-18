@@ -138,5 +138,6 @@ struct Move {
 };
 
 struct GameState* game_init();
+struct Piece* create_piece(int y, int x, int player, int type);
 
 #endif

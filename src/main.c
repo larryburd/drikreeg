@@ -11,6 +11,15 @@ int main() {
         puts("ERROR RENDERING BOARD");
     }
 
+    if(display_render_status(gs) != 0) {
+        puts("ERROR RENDERING STATUS");
+    }
+
+    getch();
+
+    display_animate_piece_move(gs, gs->pieces[0], 3, 3);
+    display_refresh(gs);
+
     getch();
     display_cleanup();
     return 0;
