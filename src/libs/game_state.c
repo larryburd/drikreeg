@@ -39,7 +39,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
     struct Piece* piece = malloc(sizeof(struct Piece));
 
     int health, range, minRange, power, mvLimit, rangeType;
-    char icon;
+    char icon = '\0';
 
     /* Determine piece attributes based on type */
     switch (type) {
@@ -76,6 +76,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
         default:
             /* Invalid piece type */
             printf("Unknown piece type\n");
+            return piece;
             break;
     }
 
@@ -114,18 +115,21 @@ struct GameState* game_init() {
     struct GameState* gs = malloc(sizeof(struct GameState));
 
     /* Set board dimensions */
-    gs->boardMax_X = 6;
-    gs->boardMax_Y = 6;
+    gs->boardMax_X = 15;
+    gs->boardMax_Y = 13;
+
+    /* Find center of the row to place pieces */
+    int start_x = gs->boardMax_X / 2;
 
     /* TODO: Create 6 pieces total (3 for each player) with starting positions */
     /* Example: gs->pieces[0] = create_piece(0, 0, PLAYER_ONE, MELEE); */
-    gs->pieces[0] = create_piece(0, 1, PLAYER_ONE, MELEE);
-    gs->pieces[1] = create_piece(0, 2, PLAYER_ONE, HEALER);
-    gs->pieces[2] = create_piece(0, 3, PLAYER_ONE, RANGED);
+    gs->pieces[0] = create_piece(0, start_x, PLAYER_ONE, MELEE);
+    gs->pieces[1] = create_piece(0, start_x + 1, PLAYER_ONE, HEALER);
+    gs->pieces[2] = create_piece(0, start_x - 1, PLAYER_ONE, RANGED);
 
-    gs->pieces[3] = create_piece(5, 1, PLAYER_TWO, MELEE);
-    gs->pieces[4] = create_piece(5, 2, PLAYER_TWO, HEALER);
-    gs->pieces[5] = create_piece(5, 3, PLAYER_TWO, RANGED);
+    gs->pieces[3] = create_piece(gs->boardMax_Y - 1, start_x, PLAYER_TWO, MELEE);
+    gs->pieces[4] = create_piece(gs->boardMax_Y - 1, start_x + 1, PLAYER_TWO, HEALER);
+    gs->pieces[5] = create_piece(gs->boardMax_Y - 1, start_x - 1, PLAYER_TWO, RANGED);
 
     /* Initialize game state */
     gs->currPlayer = PLAYER_ONE;
@@ -133,4 +137,16 @@ struct GameState* game_init() {
     gs->actionCount = 0;
 
     return gs;
+}
+
+void changeTurns(struct GameState* gs) {
+    if (gs->currPlayer == PLAYER_ONE) {
+        gs->currPlayer = PLAYER_TWO;
+    } else {
+        gs->currPlayer = PLAYER_ONE;
+    }
+
+    gs->actionCount++;
+
+    return;
 }

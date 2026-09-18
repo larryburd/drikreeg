@@ -53,7 +53,7 @@ int display_render_board(struct GameState* gs) {
                     gs->pieces[i]->x * 2 + SCREENBUFFER_X == x && 
                     gs->pieces[i]->y + SCREENBUFFER_Y == y) {
                     symbol = gs->pieces[i]->icon;
-                    attron(COLOR_PAIR(gs->pieces[i]->player));
+                    attron(A_BOLD | COLOR_PAIR(gs->pieces[i]->player));
                     isPiece = true;
                     break; // Found piece, stop checking
                 }
