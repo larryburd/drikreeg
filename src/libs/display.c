@@ -37,20 +37,27 @@ int display_cleanup() {
 int display_render_board(struct GameState* gs) {
     const int SCREENBUFFER_X = 2;
     const int SCREENBUFFER_Y = 2;
-
-    // Add space buffers to the x axis
     const int boardWidth = gs->boardMax_X * 2;
 
-    // Draw the board, rndering pieces if their x,y match the current
-    // X moves 2 over to create space between the squares
     for (int y = SCREENBUFFER_Y; y < SCREENBUFFER_Y + gs->boardMax_Y; ++y) {
         for (int x = SCREENBUFFER_X; x < SCREENBUFFER_X + boardWidth; x+=2) {
-            mvaddch(y, x, pieceSymbols[3]);
+            char symbol = pieceSymbols[3]; // Default to empty square
+            
+            // Check if any piece is at this board position
+            for (int i = 0; i < 6; ++i) {
+                if (gs->pieces[i] != NULL && 
+                    gs->pieces[i]->x * 2 + SCREENBUFFER_X == x && 
+                    gs->pieces[i]->y + SCREENBUFFER_Y == y) {
+                    symbol = gs->pieces[i]->icon;
+                    break; // Found piece, stop checking
+                }
+            }
+            
+            mvaddch(y, x, symbol); // Draw either piece or empty square
         }
     }
     return 0;
 }
-
 int display_render_status(struct GameState* gs) {
 
     return 0;
