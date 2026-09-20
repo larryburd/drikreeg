@@ -95,6 +95,7 @@ enum GamePhase {
  *   actionHistroy[3][100]: A log of the last three actions to be taken
  *   actionCount: The number of moves taken throughout the whole game
  */
+/* TODO: Add array to hold the last three move messages */
 struct GameState {
     int boardMax_X;
     int boardMax_Y;
@@ -139,6 +140,10 @@ struct Move {
 
 struct GameState* game_init();
 struct Piece* create_piece(int y, int x, int player, int type);
+struct Move* createMove(int fromX, int fromY, int toX, int toY, enum ActionType action, int pieceIndex);
 void changeTurns(struct GameState* gs);
-int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y);
+char* actionToString(enum ActionType type);
+// int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y);
+int isMoveLegal(struct GameState* gs, struct Move* move);
+
 #endif

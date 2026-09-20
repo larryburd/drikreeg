@@ -97,6 +97,32 @@ struct Piece* create_piece(int y, int x, int player, int type) {
     
 }
 
+struct Move* createMove(int fromX, int fromY, int toX, int toY, enum ActionType action, int pieceIndex) {
+    struct Move* move = malloc(sizeof(struct Move));
+    move->fromX = fromX;
+    move->fromY = fromY;
+    move->toX   = toX;
+    move->toY   = toY;
+    move->action = action;
+    move->pieceIndex = pieceIndex;
+
+    return move;
+}
+
+char* actionToString(enum ActionType type) {
+    static const char* actionStrings[] = {
+        "Move",
+        "Attack",
+        "Heal",
+    };
+
+    if (type >= 0 && type < 3) {
+        return actionStrings[type];
+    }
+
+    return "Unkown";
+}
+
 /**
  * game_init - Initializes the game state with default values.
  *
@@ -167,15 +193,17 @@ void changeTurns(struct GameState* gs) {
  *   - Distance from current position doesn't exceed mvLimit (movement limit)
  *   - No other piece occupies the destination
  */
-int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y) {
+int isMoveLegal(struct GameState* gs, struct Move* move) {
+    struct Piece* piece = gs->pieces[move->pieceIndex];
+
     /* Check if target is within board bounds */
-    if (target_x < 0 || target_x >= gs->boardMax_X || 
-        target_y < 0 || target_y >= gs->boardMax_Y) {
+    if (move->toX < 0 || move->toX >= gs->boardMax_X || 
+        move->toY < 0 || move->toY >= gs->boardMax_Y) {
         return -1;  /* Out of bounds */
     }
     
     /* Calculate Manhattan distance (total squares to travel) */
-    int distance = abs(piece->x - target_x) + abs(piece->y - target_y);
+    int distance = abs(move->fromX - move->toX) + abs(move->fromY - move->toY);
     
     /* Check if distance exceeds movement limit */
     if (distance > piece->mvLimit) {
@@ -186,8 +214,8 @@ int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int t
     for (int i = 0; i < 6; i++) {
         if (gs->pieces[i] != NULL && 
             gs->pieces[i] != piece &&  /* Don't check the piece against itself */
-            gs->pieces[i]->x == target_x && 
-            gs->pieces[i]->y == target_y) {
+            gs->pieces[i]->x == move->toX && 
+            gs->pieces[i]->y == move->toY) {
             return -1;  /* Space occupied */
         }
     }
