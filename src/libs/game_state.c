@@ -6,6 +6,8 @@
  */
 
 #include "../ifaces/game_state.h"
+#include "../ifaces/move.h"
+#include "../ifaces/messages.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -35,7 +37,7 @@ const char pieceSymbols[] = {
  *   - RANGED: Medium health, 2-3 range attack, 4 movement
  *   - HEALER: Low health, 2 range heal, 3 movement
  */
-struct Piece* create_piece(int y, int x, int player, int type) {
+struct Piece* create_piece(int index, int y, int x, int player, int type) {
     struct Piece* piece = malloc(sizeof(struct Piece));
 
     int health, range, minRange, power, mvLimit, rangeType;
@@ -81,6 +83,7 @@ struct Piece* create_piece(int y, int x, int player, int type) {
     }
 
     /* Initialize piece with calculated attributes and provided location/owner */
+    piece->index = index;
     piece->y = y;
     piece->x = x;
     piece->health = health;
@@ -95,32 +98,6 @@ struct Piece* create_piece(int y, int x, int player, int type) {
 
     return piece;
     
-}
-
-struct Move* createMove(int fromX, int fromY, int toX, int toY, enum ActionType action, int pieceIndex) {
-    struct Move* move = malloc(sizeof(struct Move));
-    move->fromX = fromX;
-    move->fromY = fromY;
-    move->toX   = toX;
-    move->toY   = toY;
-    move->action = action;
-    move->pieceIndex = pieceIndex;
-
-    return move;
-}
-
-char* actionToString(enum ActionType type) {
-    static const char* actionStrings[] = {
-        "Move",
-        "Attack",
-        "Heal",
-    };
-
-    if (type >= 0 && type < 3) {
-        return actionStrings[type];
-    }
-
-    return "Unkown";
 }
 
 /**
@@ -149,13 +126,13 @@ struct GameState* game_init() {
 
     /* TODO: Create 6 pieces total (3 for each player) with starting positions */
     /* Example: gs->pieces[0] = create_piece(0, 0, PLAYER_ONE, MELEE); */
-    gs->pieces[0] = create_piece(0, start_x, PLAYER_ONE, MELEE);
-    gs->pieces[1] = create_piece(0, start_x + 1, PLAYER_ONE, HEALER);
-    gs->pieces[2] = create_piece(0, start_x - 1, PLAYER_ONE, RANGED);
+    gs->pieces[0] = create_piece(0, 0, start_x, PLAYER_ONE, MELEE);
+    gs->pieces[1] = create_piece(1, 0, start_x + 1, PLAYER_ONE, HEALER);
+    gs->pieces[2] = create_piece(2, 0, start_x - 1, PLAYER_ONE, RANGED);
 
-    gs->pieces[3] = create_piece(gs->boardMax_Y - 1, start_x, PLAYER_TWO, MELEE);
-    gs->pieces[4] = create_piece(gs->boardMax_Y - 1, start_x + 1, PLAYER_TWO, HEALER);
-    gs->pieces[5] = create_piece(gs->boardMax_Y - 1, start_x - 1, PLAYER_TWO, RANGED);
+    gs->pieces[3] = create_piece(3, gs->boardMax_Y - 1, start_x, PLAYER_TWO, MELEE);
+    gs->pieces[4] = create_piece(4, gs->boardMax_Y - 1, start_x + 1, PLAYER_TWO, HEALER);
+    gs->pieces[5] = create_piece(5, gs->boardMax_Y - 1, start_x - 1, PLAYER_TWO, RANGED);
 
     /* Initialize game state */
     gs->currPlayer = PLAYER_ONE;
@@ -178,47 +155,3 @@ void changeTurns(struct GameState* gs) {
     return;
 }
 
-/**
- * is_move_legal - Checks if a move is legal based on game rules.
- * 
- * @param gs: Pointer to the GameState
- * @param piece: Pointer to the piece being moved
- * @param target_x: X coordinate of the destination
- * @param target_y: Y coordinate of the destination
- * 
- * @return: 0 if move is legal, -1 if illegal
- * 
- * Checks:
- *   - Destination is within board bounds
- *   - Distance from current position doesn't exceed mvLimit (movement limit)
- *   - No other piece occupies the destination
- */
-int isMoveLegal(struct GameState* gs, struct Move* move) {
-    struct Piece* piece = gs->pieces[move->pieceIndex];
-
-    /* Check if target is within board bounds */
-    if (move->toX < 0 || move->toX >= gs->boardMax_X || 
-        move->toY < 0 || move->toY >= gs->boardMax_Y) {
-        return -1;  /* Out of bounds */
-    }
-    
-    /* Calculate Manhattan distance (total squares to travel) */
-    int distance = abs(move->fromX - move->toX) + abs(move->fromY - move->toY);
-    
-    /* Check if distance exceeds movement limit */
-    if (distance > piece->mvLimit) {
-        return -1;  /* Too far to move */
-    }
-    
-    /* Check if another piece occupies the destination */
-    for (int i = 0; i < 6; i++) {
-        if (gs->pieces[i] != NULL && 
-            gs->pieces[i] != piece &&  /* Don't check the piece against itself */
-            gs->pieces[i]->x == move->toX && 
-            gs->pieces[i]->y == move->toY) {
-            return -1;  /* Space occupied */
-        }
-    }
-    
-    return 0;  /* Move is legal */
-}

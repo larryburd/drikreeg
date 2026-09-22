@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include "../ifaces/display.h"
 #include "../ifaces/game_state.h"
+#include "../ifaces/move.h"
+
 
 /* Initialize the ncurses display library */
 int display_init() {
@@ -176,9 +178,14 @@ int display_refresh(struct GameState* gs) {
     return 0;
 }
 
-int display_animate_piece_move(struct GameState* gs, struct Piece* piece, int target_x, int target_y) {
+//int display_animate_piece_move(struct GameState* gs, struct Piece* piece, int target_x, int target_y) {
+int display_animate_piece_move(struct GameState* gs, struct Move* move) {
     const int FRAME_DELAY_MS = 500; 
-    const int FRAME_DELAY_US = FRAME_DELAY_MS * 1000; // conver to microseconds
+    const int FRAME_DELAY_US = FRAME_DELAY_MS * 1000; // convert to microseconds
+
+    struct Piece* piece = gs->pieces[move->pieceIndex];
+    int target_x = move->toX;
+    int target_y = move->toY;
 
     /* Move one square at a time toward the target */
     while (piece->x != target_x || piece->y != target_y) {

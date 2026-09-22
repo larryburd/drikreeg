@@ -8,6 +8,7 @@ BUILD_DIR = build
 OBJECTS = $(BUILD_DIR)/game_state.o \
 		  $(BUILD_DIR)/display.o \
 		  $(BUILD_DIR)/messages.o \
+		  $(BUILD_DIR)/move.o \
 		  $(BUILD_DIR)/main.o
 
 # Executable name
@@ -27,6 +28,9 @@ $(BUILD_DIR)/display.o: libs/display.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/messages.o: libs/messages.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/move.o: libs/move.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/main.o: main.c

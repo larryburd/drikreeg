@@ -55,6 +55,7 @@ enum PieceType {
  *   player: Owner of the piece (1 or 2)
  */
 struct Piece {
+    int index;
     int y, x;
     int health;
     int range;
@@ -104,7 +105,6 @@ struct GameState {
     enum GamePhase gamePhase;
     char actionHistory[3][100];
     int actionCount;
-
 };
 
 /*
@@ -114,36 +114,10 @@ struct GameState {
  * ATTACK: Piece is attacking a target
  * HEAL: Piece is healing an allied target
  */
-enum ActionType {
-    MOVE,
-    ATTACK,
-    HEAL
-};
 
-/*
- * Struct: Move
- * Represents a single action/move a piece wants to perform.
- * Used by AI to generate possible moves and by game logic to execute moves.
- * 
- * Fields:
- *   fromX, fromY: Starting position of the acting piece
- *   toX, toY: Target position (destination for MOVE, target for ATTACK/HEAL)
- *   action: Type of action being performed
- *   pieceIndex: Index into GameState.pieces array for quick piece lookup
- */
-struct Move {
-    int fromX, fromY;           // Source position (which piece is acting)
-    int toX, toY;               // Target position
-    enum ActionType action;     // What type of action
-    int pieceIndex;             // Index into pieces array for quick lookup
-};
 
 struct GameState* game_init();
-struct Piece* create_piece(int y, int x, int player, int type);
-struct Move* createMove(int fromX, int fromY, int toX, int toY, enum ActionType action, int pieceIndex);
+struct Piece* create_piece(int index, int y, int x, int player, int type);
 void changeTurns(struct GameState* gs);
-char* actionToString(enum ActionType type);
-// int is_move_legal(struct GameState* gs, struct Piece* piece, int target_x, int target_y);
-int isMoveLegal(struct GameState* gs, struct Move* move);
 
 #endif

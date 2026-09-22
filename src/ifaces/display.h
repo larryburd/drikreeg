@@ -9,7 +9,8 @@
     // Windows headers will go here
 #endif
 
-#include "game_state.h"
+struct GameState;
+struct Move;
 
 // All display functions return 0 for success and -1 for error
 int display_init();
@@ -17,7 +18,7 @@ int display_cleanup();
 int display_render_board(struct GameState* gs);
 int display_render_status(struct GameState* gs);
 int display_render_message(const char* msg);
-int display_animate_piece_move(struct GameState* gs, struct Piece* piece, int target_x, int target_y);
+int display_animate_piece_move(struct GameState* gs, struct Move* move);
 int display_refresh(struct GameState* gs);
 
 #endif
