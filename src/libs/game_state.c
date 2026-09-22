@@ -10,6 +10,7 @@
 #include "../ifaces/messages.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /**
  * Array of symbols used to represent different piece types on the board.
@@ -111,7 +112,6 @@ struct Piece* create_piece(int index, int y, int x, int player, int type) {
  *   - Game phase (PLAYING)
  *   - Action history counter
  *
- * TODO: Allocate and initialize the 6 pieces (3 per player)
  */
 struct GameState* game_init() {
     /* Allocate memory for game state */
@@ -152,6 +152,26 @@ void changeTurns(struct GameState* gs) {
 
     gs->actionCount++;
 
+    return;
+}
+
+void addActionHist(struct GameState* gs, char* msg){
+    /* find the first empty message array */
+    for (int i = 0; i < MESSAGELOGLEN; i++) {
+        if (gs->actionHistory[i][0] == '\0') {
+            strncpy(gs->actionHistory[i], msg, MAXMSGSIZE);
+            return;
+        }
+    }
+
+    /*  Msg queue is full.
+        Remove the first message, move the other two up one,
+        and add the new one to the last index */
+    for (int i = 0; i < MESSAGELOGLEN; i++) {
+        strncpy(gs->actionHistory[i], gs->actionHistory[i + 1], MAXMSGSIZE);
+    }
+    
+    strncpy(gs->actionHistory[MESSAGELOGLEN - 1], msg, MAXMSGSIZE);
     return;
 }
 

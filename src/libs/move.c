@@ -83,10 +83,9 @@ int movePiece(struct GameState* gs, struct Move* move) {
     if (isMoveLegal(gs, move) == 0) {
         display_animate_piece_move(gs, move);
         moveMsg(msg, sizeof(msg), gs->currPlayer, move, gs);
-        display_render_message(msg);
         changeTurns(gs);
     } else {
-        display_render_message("Illegal Move!");
+        //display_render_message("Illegal Move!");
     }
 
     display_refresh(gs);

@@ -1,6 +1,9 @@
 #ifndef GAME_STATE
 #define GAME_STATE
 
+#define MESSAGELOGLEN 3
+#define MAXMSGSIZE 100
+
 /* 
  * Data structures to hold the game's items (board, pieces, player state, etc).
  * Defines the core game model used throughout the application.
@@ -103,21 +106,13 @@ struct GameState {
     enum Players currPlayer;
     struct Piece* pieces[6];
     enum GamePhase gamePhase;
-    char actionHistory[3][100];
+    char actionHistory[MESSAGELOGLEN][MAXMSGSIZE];
     int actionCount;
 };
-
-/*
- * Enum: ActionType
- * Specifies what type of action a piece is performing.
- * MOVE: Piece is moving to a new position
- * ATTACK: Piece is attacking a target
- * HEAL: Piece is healing an allied target
- */
-
 
 struct GameState* game_init();
 struct Piece* create_piece(int index, int y, int x, int player, int type);
 void changeTurns(struct GameState* gs);
+void addActionHist(struct GameState* gs, char* msg);
 
 #endif

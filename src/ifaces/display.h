@@ -17,7 +17,8 @@ int display_init();
 int display_cleanup();
 int display_render_board(struct GameState* gs);
 int display_render_status(struct GameState* gs);
-int display_render_message(const char* msg);
+//int display_render_message(const char* msg);
+int display_render_message(struct GameState* gs);
 int display_animate_piece_move(struct GameState* gs, struct Move* move);
 int display_refresh(struct GameState* gs);
 

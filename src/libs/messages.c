@@ -16,4 +16,5 @@ void moveMsg(char* msg, int msgSize, int currPlayer, struct Move* move, struct G
     }
 
     snprintf(msg, msgSize, "%s moved their %c from (%d, %d) to (%d, %d).", player, icon, move->fromX, move->fromY, move->toX, move->toY);
+    addActionHist(gs, msg);
 }

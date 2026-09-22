@@ -7,18 +7,20 @@
 int main() {
     struct GameState* gs = game_init();
     struct Move* move;
-    char msg[256];
 
     if (display_init() != 0) {
         puts("ERROR INITIALIZING DISPLAY");
+        return -1;
     }
 
     if(display_render_board(gs) != 0) {
         puts("ERROR RENDERING BOARD");
+        return -1;
     }
 
     if(display_render_status(gs) != 0) {
         puts("ERROR RENDERING STATUS");
+        return -1;
     }
 
     getch();
